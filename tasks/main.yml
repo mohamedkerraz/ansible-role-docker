@@ -1,0 +1,41 @@
+- name: Delete docker old version
+  become: true
+  ansible.builtin.apt:
+    name:
+      - docker.io
+      - docker-compose
+      - docker-doc
+      - podman-docker
+      - containerd
+      - runc
+    state: absent
+
+- name: Add repo docker
+  become: true
+  ansible.builtin.deb822_repository:
+    name: docker
+    uris: https://download.docker.com/linux/debian
+    signed_by: https://download.docker.com/linux/debian/gpg
+    types: deb
+    components: stable
+    suites: "{{ ansible_facts.distribution_release }}"
+    state: present
+
+- name: Install docker
+  become: true
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+    update_cache: true
+
+- name: Start docker service
+  become: true
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: true
