@@ -1,0 +1,1 @@
+user: "{{ lookup('env', 'ANSIBLE_USER') or 'ANSIBLE_USER' }}"
